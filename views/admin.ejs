@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>ViiLab - Admin Panel</title>
+  <link rel="icon" type="image/jpeg" href="/logo.jpg">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="card">
+    <div class="topbar">
+      <h1 style="display: flex; align-items: center; gap: 0.75rem;">
+        <img src="/logo.jpg" alt="Logo" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent);">
+        Admin Panel
+      </h1>
+      <a href="/dashboard">← back</a>
+    </div>
+    <p>Welcome, <%= user.display_name %>. This page is admin-only.</p>
+    <div class="note-body">
+      🍉 SECRET FLAG: w.malon{c00k13_th3ft_l3ads_t0_t4k30v3r}<br>
+      Backup server: 10.0.0.5<br>
+      Rotate API keys every 90 days.
+    </div>
+    <p class="hint">If you're seeing this without logging in as admin yourself, the session hijack chain worked.</p>
+  </div>
+</body>
+</html>

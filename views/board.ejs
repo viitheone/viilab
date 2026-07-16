@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>ViiLab - Community Board</title>
+  <link rel="icon" type="image/jpeg" href="/logo.jpg">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="card">
+    <div class="topbar">
+      <h1 style="display: flex; align-items: center; gap: 0.75rem;">
+        <img src="/logo.jpg" alt="Logo" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent);">
+        Community Board
+      </h1>
+      <a href="/dashboard">← back</a>
+    </div>
+    <p class="hint">Visible to every logged-in user, including admin.</p>
+
+    <form method="POST" action="/board">
+      <label>Title</label>
+      <input type="text" name="title" required>
+      <label>Content</label>
+      <textarea name="content" required></textarea>
+      <button type="submit">Post to board</button>
+    </form>
+
+    <h2 style="margin-top:1.5rem;">Recent posts</h2>
+    <% posts.forEach(p => { %>
+      <div class="note-body" style="margin-bottom:0.75rem;">
+        <strong><%= p.username %></strong> — <%= p.title %><br>
+        <!-- VULN #2 reused: unescaped rendering, same as note.ejs -->
+        <%- p.content %>
+      </div>
+    <% }) %>
+  </div>
+</body>
+</html>
