@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>ViiLab - <%= note.title %>
+  </title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+  <div class="card">
+    <div class="topbar">
+      <h1>#<%= note.id %> — <%= note.title %>
+      </h1>
+      <a href="/dashboard">← back</a>
+    </div>
+    <!--
+      VULN #2 (Stored XSS): content is rendered with <%- %> (unescaped)
+      instead of <%= %> (escaped). Anything saved in "content" runs as HTML/JS.
+    -->
+    <div class="note-body"><%- note.content %></div>
+    <p class="hint">owner_id: <%= note.owner_id %> — try requesting IDs that aren't yours.</p>
+  </div>
+</body>
+
+</html>

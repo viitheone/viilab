@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>ViiLab - New Note</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+  <div class="card">
+    <div class="topbar">
+      <h1>New note</h1>
+      <a href="/dashboard">← back</a>
+    </div>
+    <form method="POST" action="/notes/new">
+      <label>Title</label>
+      <input type="text" name="title" required>
+      <label>Content</label>
+      <textarea name="content" required></textarea>
+      <button type="submit">Save note</button>
+    </form>
+    <p class="hint">Try typing HTML/JS into content, e.g. &lt;script&gt;alert(document.cookie)&lt;/script&gt;</p>
+  </div>
+</body>
+
+</html>

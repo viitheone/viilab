@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>ViiLab - Dashboard</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+  <div class="card">
+    <div class="topbar">
+      <h1>Welcome, <%= user.display_name %>
+      </h1>
+      <a href="/logout">Log out</a>
+    </div>
+    <h2>Your notes</h2>
+    <ul class="note-list">
+      <% notes.forEach(n=> { %>
+        <li><a href="/notes/<%= n.id %>">#<%= n.id %> — <%= n.title %></a></li>
+        <% }) %>
+          <% if (notes.length===0) { %>
+            <li>No notes yet.</li>
+            <% } %>
+    </ul>
+    <a href="/notes/new"><button>+ New note</button></a>
+    <p class="hint">Try changing the note ID in the URL bar — do you see other users' notes?</p>
+  </div>
+</body>
+
+</html>

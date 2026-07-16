@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>ViiLab - Login</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+  <div class="card">
+    <h1>🍉 ViiLab Notes — Login</h1>
+    <form method="POST" action="/login">
+      <label>Username</label>
+      <input type="text" name="username" autocomplete="off" required>
+      <label>Password</label>
+      <input type="password" name="password" required>
+      <button type="submit">Log in</button>
+    </form>
+    <% if (error) { %>
+      <p class="error">
+        <%= error %>
+      </p>
+      <% } %>
+        <p class="hint">Demo users: alice / bob / admin (see README for passwords)</p>
+  </div>
+</body>
+
+</html>

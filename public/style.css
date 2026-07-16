@@ -1,0 +1,49 @@
+* { box-sizing: border-box; font-family: -apple-system, Segoe UI, Roboto, sans-serif; }
+body {
+  background: #0f1115;
+  color: #e6e6e6;
+  margin: 0;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+}
+.card {
+  background: #1a1d24;
+  border: 1px solid #2a2e38;
+  border-radius: 10px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 460px;
+}
+h1 { font-size: 1.4rem; margin-top: 0; }
+h2 { font-size: 1.1rem; color: #9fd; }
+label { display: block; margin: 0.75rem 0 0.25rem; font-size: 0.85rem; color: #aaa; }
+input, textarea {
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #333;
+  background: #11131a;
+  color: #eee;
+}
+textarea { min-height: 120px; resize: vertical; }
+button {
+  margin-top: 1.2rem;
+  padding: 0.6rem 1.2rem;
+  background: #4f8cff;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+}
+button:hover { background: #3a75e0; }
+.error { color: #ff6b6b; margin-top: 0.5rem; }
+.note-list { list-style: none; padding: 0; }
+.note-list li { margin: 0.5rem 0; }
+.note-list a { color: #9fd; text-decoration: none; }
+.note-list a:hover { text-decoration: underline; }
+.topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+.topbar a { color: #ff8a8a; font-size: 0.85rem; text-decoration: none; }
+.note-body { background: #11131a; padding: 1rem; border-radius: 6px; margin-top: 0.5rem; white-space: pre-wrap; }
+.hint { color: #666; font-size: 0.75rem; margin-top: 1.5rem; border-top: 1px solid #2a2e38; padding-top: 0.75rem; }
