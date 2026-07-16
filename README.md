@@ -106,8 +106,8 @@ if (note.owner_id !== req.session.user.id) {
 ## Report Notes (for the writeup)
 
 **Problem statement:** Many small/internal web apps ship with these exact
-mistakes — raw SQL concatenation, unescaped template output, and missing
-authorization checks — because they're easy to overlook and don't break
+mistakes; raw SQL concatenation, unescaped template output, and missing
+authorization checks; because they're easy to overlook and don't break
 functionality during normal use. This lab reproduces all three in a
 realistic, minimal app to demonstrate impact and remediation.
 
