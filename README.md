@@ -4,7 +4,7 @@
 > Never deploy this outside a local/sandboxed environment.
 
 A minimal notes app (Node.js/Express + SQLite) built to demonstrate four
-real-world web vulnerabilities from the OWASP Top 10 — plus a chained
+real-world web vulnerabilities from the OWASP Top 10; plus a chained
 attack that combines two of them into a full account takeover — each with
 a working exploit and a fix path.
 
@@ -70,7 +70,7 @@ would escape it safely.
 <script>alert(document.cookie)</script>
 ```
 The script executes for anyone who views that note (including other users,
-if combined with the IDOR below — this is how stored XSS becomes a session
+if combined with the IDOR below; this is how stored XSS becomes a session
 hijacking vector in the real world).
 
 **Fix:** Switch to `<%= note.content %>` for escaped output, or sanitize
@@ -90,7 +90,7 @@ const note = db.prepare('SELECT * FROM notes WHERE id = ?').get(req.params.id);
 // no ownership check before rendering
 ```
 
-**Exploit:** Log in as alice, then visit `/notes/3` or `/notes/4` directly —
+**Exploit:** Log in as alice, then visit `/notes/3` or `/notes/4` directly;
 these belong to bob and admin respectively, and their private note content
 (bob's bank PIN, admin's server info) is returned with no authorization
 check at all.
@@ -138,13 +138,13 @@ admin's password.
    ```
 2. When admin logs in and views `/board`, the script executes in admin's
    browser. Because the session cookie isn't `httpOnly`, the script can
-   read it via `document.cookie` and send it to `/steal` — an endpoint
+   read it via `document.cookie` and send it to `/steal`; an endpoint
    standing in for an attacker-controlled collector server.
 3. Bob checks `/collector` and retrieves admin's stolen session cookie.
 4. Bob replaces his own `connect.sid` cookie with the stolen one and
    requests `/admin`.
 5. The server has no way to tell the difference between admin's real
-   browser and bob's forged request — same valid session ID, same
+   browser and bob's forged request; same valid session ID, same
    access. Bob is now looking at the admin panel, having never touched
    admin's password.
 
@@ -164,25 +164,7 @@ bash exploit_chain.sh
 
 ---
 
-## Report Notes (for the writeup)
-
-**Problem statement:** Many small/internal web apps ship with these exact
-mistakes — raw SQL concatenation, unescaped template output, missing
-authorization checks, and misconfigured session cookies — because each one
-individually seems low-risk and doesn't break normal functionality. This
-lab reproduces all four in a realistic, minimal app, and shows how two of
-them combine into something worse than the sum of their parts: a full,
-password-free admin takeover.
-
-**How it works:** Standard Express app with session-based auth and a
-SQLite-backed notes feature, plus a shared community board that any user
-(including admin) can view. Each vulnerability lives in a single, clearly
-commented location for demo/teaching purposes; `exploit_chain.sh` walks
-through the combined attack end-to-end against a running instance.
-
-**Features implemented:** login/logout, per-user note creation and viewing,
-a shared public board, an admin-only panel, SQLite persistence, an
-automated exploit-chain script.
+## Notes
 
 **Limitations:** single demo session secret (not production-safe even
 after fixing all 4 vulns), no CSRF protection, no rate limiting on login,
